@@ -6,8 +6,8 @@ class Mpesa
 		public function __construct()
 			{
 				$this->ci 	 =	& get_instance();
-				$this->ci->config->load('mpesa',TRUE,TRUE);
-				$this->mpesa =	(object)$this->ci->config->config["mpesa"];				
+				$this->ci->config->load('mpesa',TRUE);
+				$this->mpesa =	(object)$this->ci->config->item('mpesa');				
 			}
 		public function generatetoken()
 			{				
@@ -20,11 +20,12 @@ class Mpesa
 				curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 				$curl_response = curl_exec($curl);
-				return json_decode($curl_response);				
+				return json_decode($curl_response)->access_token;				
 			}
 		public function cert()
 			{
-				$publicKey = APPPATH."cert/cert.cer";			
+				$publicKey = "PATH_TO_CERTICATE_FILE";	
+				//return $publicKey;		
 				$plaintext = $this->mpesa->certpass;
 				openssl_public_encrypt($plaintext, $encrypted, $publicKey, OPENSSL_PKCS1_PADDING);
 				return base64_encode($encrypted);
@@ -62,7 +63,7 @@ class Mpesa
 										  	'PartyA' 				=> $msisdn,
 										  	'PartyB' 				=> $this->mpesa->checkout_shortcode,
 										  	'PhoneNumber' 			=> $msisdn,
-										  	'CallBackURL' 			=> 'https://ip_address:port/callback',
+										  	'CallBackURL' 			=> $this->mpesa->checkout_callbackurl,
 										  	'AccountReference' 		=> $ref,
 										  	'TransactionDesc' 		=> $desc
 										);

@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
+$this->ci 	 =	& get_instance();
 $config['ConsumerKey']			=	'2SEPZfDFlcBh5pvfQofxcei72Igflotd';
 $config['ConsumerSecret']		=	'oDqu2qEYv9mMJMr8';
 $config["token_link"]			=	'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
@@ -9,9 +9,9 @@ $config["certpass"]				=	'caydeesoft123';
 //Mpesa Checkout
 $config['checkout_processlink']	=	'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'; 
 $config['checkout_querylink']	=	'https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query';
-$config['checkout_shortcode']	=	'';
-$config['checkout_passkey']		=	'';
-$config['checkout_callbackurl']	=	'';
+$config['checkout_shortcode']	=	'174379';
+$config['checkout_passkey']		=	'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919';
+$config['checkout_callbackurl']	=	'https://www.standardmedia.co.ke/magazines/callback';
 
 // Mpesa Reversal
 $config["reversal_link"]		=	'https://sandbox.safaricom.co.ke/mpesa/reversal/v1/request';

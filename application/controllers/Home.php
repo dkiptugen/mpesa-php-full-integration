@@ -13,6 +13,7 @@ class Home extends CI_Controller
 			}
 		public function test()
 			{
-				var_dump($this->mpesalib->generatetoken());
+			    //echo $this->mpesa->generatetoken();
+				var_dump($this->mpesa->checkout("254713154085",50,"DEN2017","main description"));
 			}
 	}
