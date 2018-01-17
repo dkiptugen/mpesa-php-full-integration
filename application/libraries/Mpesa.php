@@ -24,11 +24,26 @@ class Mpesa
 			}
 		public function cert($plaintext)
 			{
-				$publicKey = file_get_contents(APPPATH."cert/cert.cer");
-				//return $publicKey;		
+				$fp=fopen(APPPATH."cert/cert.cer","r");
+				$publicKey = fread($fp,filesize(APPPATH."cert/cert.cer"));
+				fclose($fp);
+				openssl_get_publickey($publicKey);
 				openssl_public_encrypt($plaintext, $encrypted, $publicKey, OPENSSL_PKCS1_PADDING);
-				return base64_encode($encrypted);
+				return  base64_encode($encrypted);				
 			}
+		public static function encryptPassword($password)
+			{
+
+		        //$pub_key 			= openssl_pkey_get_public(file_get_contents('Certs/apicrypt-staging.safaricom.co.ke.cer'));
+		        $pub_key 			= openssl_pkey_get_public(file_get_contents(APPPATH."cert/cert.cer"));
+		        $pubKeyData			= openssl_pkey_get_details($pub_key);
+		        $rsa 				= new Crypt_RSA();
+		        $rsa->loadKey($pubKeyData['key']); // public key
+		        $rsa->setEncryptionMode(CRYPT_RSA_ENCRYPTION_PKCS1);
+		        $ciphertext 		= $rsa->encrypt($password);
+		        $securityCredential = base64_encode($ciphertext);
+		        return $securityCredential;
+    		}
 		public function getIdentifier($type)
 			{
 				switch($type)
@@ -121,7 +136,7 @@ class Mpesa
 				$curl_response = curl_exec($curl);
 				return $curl_response;
 			}
-		public function accountbalance($Initiator,$cred,$shortcode,$IdentifierType,$remark)
+		public function accountbalance($remark)
 			{
 				$url 	= $this->mpesa->balance_link;
 				$curl 	= curl_init();
@@ -129,11 +144,11 @@ class Mpesa
 				curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization:Bearer '.$this->generatetoken()));
 
 				$curl_post_data = array(
-										   	'Initiator' 			=> $Initiator,
-										  	'SecurityCredential' 	=> $this->cert($cred),
+										   	'Initiator' 			=> $this->mpesa->initiator,
+										  	'SecurityCredential' 	=> $this->cert($this->mpesa->credential),
 										  	'CommandID' 			=> 'AccountBalance',
-										  	'PartyA' 				=> $shortcode,
-										  	'IdentifierType' 		=> $this->getIdentifier($IdentifierType),
+										  	'PartyA' 				=> $this->mpesa->partyA_shortcode,
+										  	'IdentifierType' 		=> $this->getIdentifier("Shortcode"),
 										  	'Remarks' 				=> $remark,
 										  	'QueueTimeOutURL' 		=> $this->mpesa->balance_timeoutUrl,
 										  	'ResultURL' 			=> $this->mpesa->balance_resultUrl
@@ -184,21 +199,21 @@ class Mpesa
 				$curl_response = curl_exec($curl);
 				return $curl_response;
 			}
-		public function B2B($initiator,$cred,$CommandID,$SenderIdentifier,$RecieverIdentifier,$amount,$sender,$reciever,$accountref,$remarks)
+		public function B2B($CommandID,$accountref,$remarks)
 			{
 				$url 	= 	$this->mpesa->b2b_link;
 				$curl 	= 	curl_init();
 				curl_setopt($curl, CURLOPT_URL, $url);
 				curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization:Bearer '.$this->generatetoken())); 
 				$curl_post_data = array(
-										  	'Initiator' 				=> $initiator,
-										  	'SecurityCredential' 		=> $this->cert($cred),
+										  	'Initiator' 				=> $this->mpesa->initiator,
+										  	'SecurityCredential' 		=> $this->cert($this->mpesa->credential),
 										  	'CommandID' 				=> $CommandID,
-										  	'SenderIdentifierType' 		=> $this->getIdentifier($SenderIdentifier),
-										  	'RecieverIdentifierType' 	=> $this->getIdentifier($RecieverIdentifier),
+										  	'SenderIdentifierType' 		=> $this->getIdentifier("Shortcode"),
+										  	'RecieverIdentifierType' 	=> $this->getIdentifier("MSISDN"),
 										  	'Amount' 					=> $amount,
-										  	'PartyA' 					=> $sender,
-										  	'PartyB' 					=> $reciever,
+										  	'PartyA' 					=> $this->mpesa->partyA_shortcode,
+										  	'PartyB' 					=> $this->mpesa->partyB_shortcode,
 										  	'AccountReference' 			=> $accountref,
 										  	'Remarks' 					=> $remarks,
 										  	'QueueTimeOutURL' 			=> $this->mpesa->b2b_timeoutURL,
@@ -211,19 +226,19 @@ class Mpesa
 				$curl_response = curl_exec($curl);
 				return $curl_response;
 			}
-		public function B2C($initiator,$cred,$CommandID,$amount,$sender,$reciever,$remarks,$ocassion)
+		public function B2C($CommandID,$amount,$remarks,$ocassion)
 			{
 				$url = $this->mpesa->b2c_link;
 				$curl = curl_init();
 				curl_setopt($curl, CURLOPT_URL, $url);
 				curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization:Bearer '.$this->generatetoken())); 
 				$curl_post_data = array(
-										  	'InitiatorName' 		=> 	$initiator,
-										  	'SecurityCredential' 	=> 	$this->cert($cred),
+										  	'InitiatorName' 		=> 	$this->mpesa->initiator,
+										  	'SecurityCredential' 	=> 	$this->cert($this->mpesa->credential),
 										  	'CommandID' 			=> 	$CommandID,
 										  	'Amount' 				=> 	$amount,
-										  	'PartyA' 				=> 	$sender,
-										  	'PartyB' 				=> 	$reciever,
+										  	'PartyA' 				=> 	$this->mpesa->partyA_shortcode,
+										  	'PartyB' 				=> 	$this->mpesa->test_msisdn,
 										  	'Remarks' 				=> 	$remarks,
 										  	'QueueTimeOutURL' 		=> 	$this->mpesa->b2c_timeoutURL,
 										  	'ResultURL' 			=> 	$this->mpesa->b2c_resultURL,
@@ -241,15 +256,15 @@ class Mpesa
 
 				echo $curl_response;
 			}
-		public function transactionstatus($initiator,$cred,$transID,$coversionID,$msisdn,$identifier,$remarks,$ocassion)
+		public function transactionstatus($transID,$conversionID,$msisdn,$identifier,$remarks,$ocassion)
 			{
 				$url 	=	$this->mpesa->transtat_link;
 				$curl 	= 	curl_init();
 				curl_setopt($curl, CURLOPT_URL, $url);
 				curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization:Bearer '.$this->generatetoken()));
 				$curl_post_data = array(
-										  	'Initiator' 			=> $initiator,
-										  	'SecurityCredential' 	=> $this->cert($cred),
+										  	'Initiator' 			=> $this->mpesa->initiator,
+										  	'SecurityCredential' 	=> $this->cert($this->mpesa->credential),
 										  	'CommandID' 			=> 'TransactionStatusQuery',
 										  	'TransactionID' 		=> $transID,
 										  	'PartyA' 				=> $msisdn,
@@ -258,7 +273,7 @@ class Mpesa
 										  	'QueueTimeOutURL' 		=> $this->mpesa->transtat_timeoutURL,
 										  	'Remarks' 				=> $remarks,
 										  	'Occasion' 				=> $ocassion,
-                                            'OriginalConversationID'=> $coversionID
+                                            'OriginalConversationID'=> $conversionID
 										);
 				$data_string = json_encode($curl_post_data);
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);

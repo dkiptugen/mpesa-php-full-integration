@@ -4,6 +4,11 @@ $this->ci 	 =	& get_instance();
 $config['ConsumerKey']			=	'2SEPZfDFlcBh5pvfQofxcei72Igflotd';
 $config['ConsumerSecret']		=	'oDqu2qEYv9mMJMr8';
 $config["token_link"]			=	'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials';
+$config["initiator"]			=	'testapi771';
+$config["credential"]			=	'5PW7nppk';
+$config["partyA_shortcode"]		=	'600771';
+$config["partyB_shortcode"]		= 	'600000';
+$config["test_msisdn"]			=	'254708374149';
 
 //Mpesa Checkout
 $config['checkout_processlink']	=	'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'; 
@@ -36,8 +41,8 @@ $config["transtat_timeoutURL"]	=	'https://178.62.89.99/test.php';
 
 // Mpesa B2B
 $config["b2b_link"]				= 	'https://sandbox.safaricom.co.ke/mpesa/b2b/v1/paymentrequest';
-$config["b2b_timeoutURL"]		=	'';
-$config["b2b_resultURL"]		=	'';
+$config["b2b_timeoutURL"]		=	'https://178.62.89.99/test.php';
+$config["b2b_resultURL"]		=	'https://178.62.89.99/test.php';
 
 // Mpesa B2C
 $config["b2c_link"]				=	'https://sandbox.safaricom.co.ke/mpesa/b2c/v1/paymentrequest';

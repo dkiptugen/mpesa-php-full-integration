@@ -14,10 +14,14 @@ class Home extends CI_Controller
 		public function test()
             {
                 //echo $this->mpesa->generatetoken();
-                var_dump($this->mpesa->transactionstatus("testapi771", "5PW7nppk", "MAG21H3Z7Y","AG_20180116_00004e8c9955ebfd8ccf", 600771, "Shortcode", "return", "payment"));
+                var_dump($this->mpesa->B2C("SalaryPayment","5000","salary","salaries deployment"));
             }
 		public function encrypt()
             {
-                var_dump($this->mpesa->B2C("testapi771","5PW7nppk","BusinessPayment",300,600771,254708374149,"return","payment of goods and services"));
+                echo $this->mpesa->cert("This is me");
             }
+        public function token()
+        	{
+        		echo $this->mpesa->generatetoken();
+        	}
 	}
