@@ -18,7 +18,7 @@ class Home extends CI_Controller
             }
 		public function encrypt()
             {
-                echo $this->mpesa->cert("This is me");
+                echo $this->mpesa->encryptPassword("This is me");
             }
         public function token()
         	{

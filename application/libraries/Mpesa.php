@@ -33,7 +33,8 @@ class Mpesa
 			}
 		public static function encryptPassword($password)
 			{
-
+			    error_reporting(0);
+                include APPPATH."third_party/Crypt/RSA.php";
 		        //$pub_key 			= openssl_pkey_get_public(file_get_contents('Certs/apicrypt-staging.safaricom.co.ke.cer'));
 		        $pub_key 			= openssl_pkey_get_public(file_get_contents(APPPATH."cert/cert.cer"));
 		        $pubKeyData			= openssl_pkey_get_details($pub_key);
@@ -234,7 +235,7 @@ class Mpesa
 				curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization:Bearer '.$this->generatetoken())); 
 				$curl_post_data = array(
 										  	'InitiatorName' 		=> 	$this->mpesa->initiator,
-										  	'SecurityCredential' 	=> 	$this->cert($this->mpesa->credential),
+										  	'SecurityCredential' 	=> 	$this->encryptPassword($this->mpesa->credential),
 										  	'CommandID' 			=> 	$CommandID,
 										  	'Amount' 				=> 	$amount,
 										  	'PartyA' 				=> 	$this->mpesa->partyA_shortcode,
