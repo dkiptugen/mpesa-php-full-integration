@@ -1,5 +1,5 @@
 <?php 
-class Callbacks extends CI_Controller
+class Callbacks extends MY_Controller
 	{
 		public function __construct()
 			{
@@ -8,20 +8,20 @@ class Callbacks extends CI_Controller
 		public static function processB2BRequestCallback()
 			{
 		        $callbackJSONData 						=	file_get_contents('php://input');
-		        $callbackData 							=	json_decode($callbackJSONData);
-		        $resultCode 							=	$callbackData->Result->ResultCode;
-		        $resultDesc 							=	$callbackData->Result->ResultDesc;
-		        $originatorConversationID 				=	$callbackData->Result->OriginatorConversationID;
-		        $conversationID 						=	$callbackData->Result->ConversationID;
-		        $transactionID 							=	$callbackData->Result->TransactionID;
-		        $transactionReceipt						=	$callbackData->Result->ResultParameters->ResultParameter[0]->Value;
-		        $transactionAmount						=	$callbackData->Result->ResultParameters->ResultParameter[1]->Value;
-		        $b2CWorkingAccountAvailableFunds		=	$callbackData->Result->ResultParameters->ResultParameter[2]->Value;
-		        $b2CUtilityAccountAvailableFunds		=	$callbackData->Result->ResultParameters->ResultParameter[3]->Value;
-		        $transactionCompletedDateTime			=	$callbackData->Result->ResultParameters->ResultParameter[4]->Value;
-		        $receiverPartyPublicName				=	$callbackData->Result->ResultParameters->ResultParameter[5]->Value;
-		        $B2CChargesPaidAccountAvailableFunds	=	$callbackData->Result->ResultParameters->ResultParameter[6]->Value;
-		        $B2CRecipientIsRegisteredCustomer		=	$callbackData->Result->ResultParameters->ResultParameter[7]->Value;
+		        $callbackData 							=	json_decode($callbackJSONData)->Result;
+		        $resultCode 							=	$callbackData->ResultCode;
+		        $resultDesc 							=	$callbackData->ResultDesc;
+		        $originatorConversationID 				=	$callbackData->OriginatorConversationID;
+		        $conversationID 						=	$callbackData->ConversationID;
+		        $transactionID 							=	$callbackData->TransactionID;
+		        $transactionReceipt						=	$callbackData->ResultParameters->ResultParameter[0]->Value;
+		        $transactionAmount						=	$callbackData->ResultParameters->ResultParameter[1]->Value;
+		        $b2CWorkingAccountAvailableFunds		=	$callbackData->ResultParameters->ResultParameter[2]->Value;
+		        $b2CUtilityAccountAvailableFunds		=	$callbackData->ResultParameters->ResultParameter[3]->Value;
+		        $transactionCompletedDateTime			=	$callbackData->ResultParameters->ResultParameter[4]->Value;
+		        $receiverPartyPublicName				=	$callbackData->ResultParameters->ResultParameter[5]->Value;
+		        $B2CChargesPaidAccountAvailableFunds	=	$callbackData->ResultParameters->ResultParameter[6]->Value;
+		        $B2CRecipientIsRegisteredCustomer		=	$callbackData->ResultParameters->ResultParameter[7]->Value;
 
 
 		        $result=array(
@@ -76,8 +76,9 @@ class Callbacks extends CI_Controller
 			        "currency"=>$currency
 			    ];
 
-
+                self::Logs("B2C.log",$result);
         		return json_encode($result);
+
     		}
     	public static function processC2BRequestValidation()
     		{
@@ -236,23 +237,23 @@ class Callbacks extends CI_Controller
 		    }
     	public static function processSTKPushQueryRequestCallback()
 	    	{
-		        $callbackJSONData=file_get_contents('php://input');
-		        $callbackData=json_decode($callbackJSONData);
-		        $responseCode=$callbackData->ResponseCode;
-		        $responseDescription=$callbackData->ResponseDescription;
-		        $merchantRequestID=$callbackData->MerchantRequestID;
-		        $checkoutRequestID=$callbackData->CheckoutRequestID;
-		        $resultCode=$callbackData->ResultCode;
-		        $resultDesc=$callbackData->ResultDesc;
+		        $callbackJSONData 		=	file_get_contents('php://input');
+		        $callbackData 			=	json_decode($callbackJSONData);
+		        $responseCode 			=	$callbackData->ResponseCode;
+		        $responseDescription 	=	$callbackData->ResponseDescription;
+		        $merchantRequestID 		=	$callbackData->MerchantRequestID;
+		        $checkoutRequestID 		=	$callbackData->CheckoutRequestID;
+		        $resultCode 			=	$callbackData->ResultCode;
+		        $resultDesc 			=	$callbackData->ResultDesc;
 
 		        $result=[
-		            "resultCode"=>$resultCode,
-		            "responseDescription"=>$responseDescription,
-		            "responseCode"=>$responseCode,
-		            "merchantRequestID"=>$merchantRequestID,
-		            "checkoutRequestID"=>$checkoutRequestID,
-		            "resultDesc"=>$resultDesc
-		        ];
+		            		"resultCode" 			=>	$resultCode,
+		            		"responseDescription" 	=>	$responseDescription,
+		            		"responseCode" 			=>	$responseCode,
+		            		"merchantRequestID" 	=>	$merchantRequestID,
+		            		"checkoutRequestID" 	=> 	$checkoutRequestID,
+	            			"resultDesc" 			=>	$resultDesc
+		        		];
 
 		        return json_encode($result);
 		    }
@@ -302,5 +303,9 @@ class Callbacks extends CI_Controller
 
 		        return json_encode($result);
 		    }
-
+        public function Logs($filename,$content)
+            {
+                $data= "\n".date("h:i:sa d,m,Y")."\t".$content;
+                write_file(APPPATH.'logs/'.$filename, $data, 'a+');
+            }
 	}

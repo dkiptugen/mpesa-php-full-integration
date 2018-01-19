@@ -35,7 +35,6 @@ class Mpesa
 			{
 			    error_reporting(0);
                 include APPPATH."third_party/Crypt/RSA.php";
-		        //$pub_key 			= openssl_pkey_get_public(file_get_contents('Certs/apicrypt-staging.safaricom.co.ke.cer'));
 		        $pub_key 			= openssl_pkey_get_public(file_get_contents(APPPATH."cert/cert.cer"));
 		        $pubKeyData			= openssl_pkey_get_details($pub_key);
 		        $rsa 				= new Crypt_RSA();
@@ -47,15 +46,16 @@ class Mpesa
     		}
 		public function getIdentifier($type)
 			{
+				$type=strtolower($type);
 				switch($type)
 					{
-						case "MSISDN":
+						case "msisdn":
 						        $x = 1;
 						        break;
-						case "Till Number":
+						case "tillnumber":
 								$x = 2;
 								break;
-						case "Shortcode":
+						case "shortcode":
 								$x = 4;
 								break;
 					}
@@ -229,8 +229,8 @@ class Mpesa
 			}
 		public function B2C($CommandID,$amount,$remarks,$ocassion)
 			{
-				$url = $this->mpesa->b2c_link;
-				$curl = curl_init();
+			    $url 	= $this->mpesa->b2c_link;
+				$curl 	= curl_init();
 				curl_setopt($curl, CURLOPT_URL, $url);
 				curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization:Bearer '.$this->generatetoken())); 
 				$curl_post_data = array(
@@ -241,7 +241,7 @@ class Mpesa
 										  	'PartyA' 				=> 	$this->mpesa->partyA_shortcode,
 										  	'PartyB' 				=> 	$this->mpesa->test_msisdn,
 										  	'Remarks' 				=> 	$remarks,
-										  	'QueueTimeOutURL' 		=> 	$this->mpesa->b2c_timeoutURL,
+										  	'QueueTimeOutURL' 		=>  $this->mpesa->b2c_timeoutURL,
 										  	'ResultURL' 			=> 	$this->mpesa->b2c_resultURL,
 										  	'Occasion' 				=> 	$ocassion
 										);
