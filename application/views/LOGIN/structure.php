@@ -1,7 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: dkiptugen
- * Date: 1/19/18
- * Time: 1:35 PM
- */
+$this->view("LOGIN/includes/header");
+$this->view("LOGIN/modules/".$view);
+$this->view("LOGIN/includes/footer");

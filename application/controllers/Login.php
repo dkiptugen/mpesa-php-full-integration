@@ -6,7 +6,7 @@ class Login extends CI_Controller
 		public function __construct()
 			{
 				parent::__construct();
-				$this->data->msg=NULL;
+				$this->data["msg"]=NULL;
 			}
 		public function is_logged_in()
 			{
@@ -27,7 +27,8 @@ class Login extends CI_Controller
                     }
                 else
                     {
-                        $this->load->view("LOGIN/login",self::data);
+                        $this->data["view"]="login";
+                        $this->load->view("LOGIN/structure",(object)$this->data);
                     }
 			}
 	}
