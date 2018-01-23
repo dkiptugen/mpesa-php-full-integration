@@ -4,6 +4,7 @@ class Callbacks extends MY_Controller
 		public function __construct()
 			{
 				parent::__construct();
+				$this->load->model("Transaction_model","tmodel");
 			}
 		public static function processB2BRequestCallback()
 			{
@@ -22,7 +23,6 @@ class Callbacks extends MY_Controller
 		        $receiverPartyPublicName				=	$callbackData->ResultParameters->ResultParameter[5]->Value;
 		        $B2CChargesPaidAccountAvailableFunds	=	$callbackData->ResultParameters->ResultParameter[6]->Value;
 		        $B2CRecipientIsRegisteredCustomer		=	$callbackData->ResultParameters->ResultParameter[7]->Value;
-
 
 		        $result=array(
 		          				"resultCode"							=>	$resultCode,
@@ -44,115 +44,115 @@ class Callbacks extends MY_Controller
     		}
     	public static function processB2CRequestCallback()
     		{
-			    $callbackJSONData=file_get_contents('php://input');
-			    $callbackData=json_decode($callbackJSONData);
-			    $resultCode=$callbackData->Result->ResultCode;
-			    $resultDesc=$callbackData->Result->ResultDesc;
-			    $originatorConversationID=$callbackData->Result->OriginatorConversationID;
-			    $conversationID=$callbackData->Result->ConversationID;
-			    $transactionID=$callbackData->Result->TransactionID;
-			    $initiatorAccountCurrentBalance=$callbackData->Result->ResultParameters->ResultParameter[0]->Value;
-			    $debitAccountCurrentBalance=$callbackData->Result->ResultParameters->ResultParameter[1]->Value;
-			    $amount=$callbackData->Result->ResultParameters->ResultParameter[2]->Value;
-			    $debitPartyAffectedAccountBalance=$callbackData->Result->ResultParameters->ResultParameter[3]->Value;
-			    $transCompletedTime=$callbackData->Result->ResultParameters->ResultParameter[4]->Value;
-			    $debitPartyCharges=$callbackData->Result->ResultParameters->ResultParameter[5]->Value;
-			    $receiverPartyPublicName=$callbackData->Result->ResultParameters->ResultParameter[6]->Value;
-			    $currency=$callbackData->Result->ResultParameters->ResultParameter[7]->Value;
+			    $callbackJSONData	 				=	file_get_contents('php://input');
+			    $callbackData 						= 	json_decode($callbackJSONData);
+			    $resultCode 						=  	$callbackData->Result->ResultCode;
+			    $resultDesc 						=	$callbackData->Result->ResultDesc;
+			    $originatorConversationID 			= 	$callbackData->Result->OriginatorConversationID;
+			    $conversationID 					=	$callbackData->Result->ConversationID;
+			    $transactionID 						=	$callbackData->Result->TransactionID;
+			    $initiatorAccountCurrentBalance 	= 	$callbackData->Result->ResultParameters->ResultParameter[0]->Value;
+			    $debitAccountCurrentBalance 		=	$callbackData->Result->ResultParameters->ResultParameter[1]->Value;
+			    $amount 							=	$callbackData->Result->ResultParameters->ResultParameter[2]->Value;
+			    $debitPartyAffectedAccountBalance	=	$callbackData->Result->ResultParameters->ResultParameter[3]->Value;
+			    $transCompletedTime 				=	$callbackData->Result->ResultParameters->ResultParameter[4]->Value;
+			    $debitPartyCharges 					= 	$callbackData->Result->ResultParameters->ResultParameter[5]->Value;
+			    $receiverPartyPublicName 			= 	$callbackData->Result->ResultParameters->ResultParameter[6]->Value;
+			    $currency							=	$callbackData->Result->ResultParameters->ResultParameter[7]->Value;
 
 			    $result=[
-			        "resultCode"=>$resultCode,
-			        "resultDesc"=>$resultDesc,
-			        "originatorConversationID"=>$originatorConversationID,
-			        "conversationID"=>$conversationID,
-			        "transactionID"=>$transactionID,
-			        "initiatorAccountCurrentBalance"=>$initiatorAccountCurrentBalance,
-			        "debitAccountCurrentBalance"=>$debitAccountCurrentBalance,
-			        "amount"=>$amount,
-			        "debitPartyAffectedAccountBalance"=>$debitPartyAffectedAccountBalance,
-			        "transCompletedTime"=>$transCompletedTime,
-			        "debitPartyCharges"=>$debitPartyCharges,
-			        "receiverPartyPublicName"=>$receiverPartyPublicName,
-			        "currency"=>$currency
+					        "resultCode"						=>	$resultCode,
+					        "resultDesc"						=>	$resultDesc,
+					        "originatorConversationID"			=>	$originatorConversationID,
+					        "conversationID"					=>	$conversationID,
+					        "transactionID"						=>	$transactionID,
+					        "initiatorAccountCurrentBalance"	=>	$initiatorAccountCurrentBalance,
+					        "debitAccountCurrentBalance"		=>	$debitAccountCurrentBalance,
+					        "amount"							=>	$amount,
+					        "debitPartyAffectedAccountBalance"	=>	$debitPartyAffectedAccountBalance,
+					        "transCompletedTime"				=>	$transCompletedTime,
+					        "debitPartyCharges"					=>	$debitPartyCharges,
+					        "receiverPartyPublicName"			=>	$receiverPartyPublicName,
+					        "currency"							=>	$currency
 			    ];
-
                 self::Logs("B2C.log",$result);
         		return json_encode($result);
 
     		}
     	public static function processC2BRequestValidation()
     		{
-		        $callbackJSONData=file_get_contents('php://input');
-		        $callbackData=json_decode($callbackJSONData);
-		        $transactionType=$callbackData->TransactionType;
-		        $transID=$callbackData->TransID;
-		        $transTime=$callbackData->TransTime;
-		        $transAmount=$callbackData->TransAmount;
-		        $businessShortCode=$callbackData->BusinessShortCode;
-		        $billRefNumber=$callbackData->BillRefNumber;
-		        $invoiceNumber=$callbackData->InvoiceNumber;
-		        $orgAccountBalance=$callbackData->OrgAccountBalance;
-		        $thirdPartyTransID=$callbackData->ThirdPartyTransID;
-		        $MSISDN=$callbackData->MSISDN;
-		        $firstName=$callbackData->FirstName;
-		        $middleName=$callbackData->MiddleName;
-		        $lastName=$callbackData->LastName;
+		        $callbackJSONData 	=	file_get_contents('php://input');
+		        $callbackData 		=	json_decode($callbackJSONData);
+		        $transactionType 	=	$callbackData->TransactionType;
+		        $transID 			=	$callbackData->TransID;
+		        $transTime 			=	$callbackData->TransTime;
+		        $transAmount 		=	$callbackData->TransAmount;
+		        $businessShortCode 	=	$callbackData->BusinessShortCode;
+		        $billRefNumber 		=	$callbackData->BillRefNumber;
+		        $invoiceNumber 		=	$callbackData->InvoiceNumber;
+		        $orgAccountBalance 	= 	$callbackData->OrgAccountBalance;
+		        $thirdPartyTransID 	=	$callbackData->ThirdPartyTransID;
+		        $MSISDN 			=	$callbackData->MSISDN;
+		        $firstName 			=	$callbackData->FirstName;
+		        $middleName 		=	$callbackData->MiddleName;
+		        $lastName 			=	$callbackData->LastName;
 
 		        $result=[
-		            $transTime=>$transTime,
-		            $transAmount=>$transAmount,
-		            $businessShortCode=>$businessShortCode,
-		            $billRefNumber=>$billRefNumber,
-		            $invoiceNumber=>$invoiceNumber,
-		            $orgAccountBalance=>$orgAccountBalance,
-		            $thirdPartyTransID=>$thirdPartyTransID,
-		            $MSISDN=>$MSISDN,
-		            $firstName=>$firstName,
-		            $lastName=>$lastName,
-		            $middleName=>$middleName,
-		            $transID=>$transID,
-		            $transactionType=>$transactionType
-
-		        ];
-
-		        return json_encode($result);
+				            "transTime"			=>	$transTime,
+				            "transAmount"		=>	$transAmount,
+				            "businessShortCode"	=>	$businessShortCode,
+				            "billRefNumber"		=>	$billRefNumber,
+				            "invoiceNumber"		=>	$invoiceNumber,
+				            "orgAccountBalance"	=>	$orgAccountBalance,
+				            "thirdPartyTransID"	=>	$thirdPartyTransID,
+				            "MSISDN"			=>	$MSISDN,
+				            "firstName"			=>	$firstName,
+				            "lastName"			=>	$lastName,
+				            "middleName"		=>	$middleName,
+				            "transID"			=>	$transID,
+				            "transactionType"	=>	$transactionType
+		        		];
+		        $resp =json_encode($result);
+		        $this->output->set_content_type('application/json')
+		                     ->set_output($resp);
     		}    
     	public static function processC2BRequestConfirmation()
     		{
-		        $callbackJSONData=file_get_contents('php://input');
-		        $callbackData=json_decode($callbackJSONData);
-		        $transactionType=$callbackData->TransactionType;
-		        $transID=$callbackData->TransID;
-		        $transTime=$callbackData->TransTime;
-		        $transAmount=$callbackData->TransAmount;
-		        $businessShortCode=$callbackData->BusinessShortCode;
-		        $billRefNumber=$callbackData->BillRefNumber;
-		        $invoiceNumber=$callbackData->InvoiceNumber;
-		        $orgAccountBalance=$callbackData->OrgAccountBalance;
-		        $thirdPartyTransID=$callbackData->ThirdPartyTransID;
-		        $MSISDN=$callbackData->MSISDN;
-		        $firstName=$callbackData->FirstName;
-		        $middleName=$callbackData->MiddleName;
-		        $lastName=$callbackData->LastName;
+		        $callbackJSONData 	=	file_get_contents('php://input');
+		        $callbackData 		=	json_decode($callbackJSONData);
+		        $transactionType 	=	$callbackData->TransactionType;
+		        $transID 			= 	$callbackData->TransID;
+		        $transTime 			=	$callbackData->TransTime;
+		        $transAmount 		=	$callbackData->TransAmount;
+		        $businessShortCode 	=	$callbackData->BusinessShortCode;
+		        $billRefNumber 		=	$callbackData->BillRefNumber;
+		        $invoiceNumber 		=	$callbackData->InvoiceNumber;
+		        $orgAccountBalance 	=	$callbackData->OrgAccountBalance;
+		        $thirdPartyTransID 	=	$callbackData->ThirdPartyTransID;
+		        $MSISDN 			=	$callbackData->MSISDN;
+		        $firstName 			=	$callbackData->FirstName;
+		        $middleName 		= 	$callbackData->MiddleName;
+		        $lastName 			=	$callbackData->LastName;
 
 		        $result=[
-		            $transTime=>$transTime,
-		            $transAmount=>$transAmount,
-		            $businessShortCode=>$businessShortCode,
-		            $billRefNumber=>$billRefNumber,
-		            $invoiceNumber=>$invoiceNumber,
-		            $orgAccountBalance=>$orgAccountBalance,
-		            $thirdPartyTransID=>$thirdPartyTransID,
-		            $MSISDN=>$MSISDN,
-		            $firstName=>$firstName,
-		            $lastName=>$lastName,
-		            $middleName=>$middleName,
-		            $transID=>$transID,
-		            $transactionType=>$transactionType
+				            "transTime"			=>	$transTime,
+				            "transAmount"		=>	$transAmount,
+				            "businessShortCode"	=>	$businessShortCode,
+				            "billRefNumber"		=>	$billRefNumber,
+				            "invoiceNumber"		=>	$invoiceNumber,
+				            "orgAccountBalance"	=>	$orgAccountBalance,
+				            "thirdPartyTransID"	=>	$thirdPartyTransID,
+				            "MSISDN"			=>	$MSISDN,
+				            "firstName"			=>	$firstName,
+				            "lastName"			=>	$lastName,
+				            "middleName"		=>	$middleName,
+				            "transID"			=>	$transID,
+				            "transactionType"	=>	$transactionType
+		        		];
+		        $resp =json_encode($result);
+		        $this->output->set_content_type('application/json')
+		                     ->set_output($resp);
 
-		        ];
-
-		        return json_encode($result);
    			}
     	public static function processAccountBalanceRequestCallback()
     		{

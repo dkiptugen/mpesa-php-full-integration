@@ -13,7 +13,7 @@ class Home extends MY_Controller
 			}
 		public function test()
             {
-                //echo $this->mpesa->generatetoken();
+                
                 var_dump($this->mpesa->B2C("SalaryPayment","5000","salary","salaries deployment"));
             }
 		public function encrypt()
