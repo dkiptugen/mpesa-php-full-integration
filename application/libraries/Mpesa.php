@@ -30,20 +30,7 @@ class Mpesa
 				openssl_get_publickey($publicKey);
 				openssl_public_encrypt($plaintext, $encrypted, $publicKey, OPENSSL_PKCS1_PADDING);
 				return  base64_encode($encrypted);				
-			}
-		public static function encryptPassword($password)
-			{
-			    error_reporting(0);
-                include APPPATH."third_party/Crypt/RSA.php";
-		        $pub_key 			= openssl_pkey_get_public(file_get_contents(APPPATH."cert/cert.cer"));
-		        $pubKeyData			= openssl_pkey_get_details($pub_key);
-		        $rsa 				= new Crypt_RSA();
-		        $rsa->loadKey($pubKeyData['key']); // public key
-		        $rsa->setEncryptionMode(CRYPT_RSA_ENCRYPTION_PKCS1);
-		        $ciphertext 		= $rsa->encrypt($password);
-		        $securityCredential = base64_encode($ciphertext);
-		        return $securityCredential;
-    		}
+			}		
 		public function getIdentifier($type)
 			{
 				$type=strtolower($type);
@@ -235,7 +222,7 @@ class Mpesa
 				curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization:Bearer '.$this->generatetoken())); 
 				$curl_post_data = array(
 										  	'InitiatorName' 		=> 	$this->mpesa->initiator,
-										  	'SecurityCredential' 	=> 	$this->encryptPassword($this->mpesa->credential),
+										  	'SecurityCredential' 	=> 	$this->cert($this->mpesa->credential),
 										  	'CommandID' 			=> 	$CommandID,
 										  	'Amount' 				=> 	$amount,
 										  	'PartyA' 				=> 	$this->mpesa->partyA_shortcode,
