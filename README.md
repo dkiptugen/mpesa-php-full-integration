@@ -2,7 +2,8 @@
 This is an integration of the mpesaG2 api using CodeIgniter
 
 ### Configuration ###
-Configuration is stored at /application/config/mpesa.php . 
+Configuration is stored at /application/config/mpesa.php .
+```
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 $this->ci 	 =	& get_instance();
@@ -59,4 +60,5 @@ $config["b2c_link"]				 =	'https://sandbox.safaricom.co.ke/mpesa/b2c/v1/paymentr
 $config["b2c_timeoutURL"]		=	site_url("B2CCallback");
 $config["b2c_resultURL"]		=	site_url("B2CCallback");
 
-
+```
+The library is at /application/libraries/mpesa.php .It can be extennded to whatever way you want
