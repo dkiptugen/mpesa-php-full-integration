@@ -1,4 +1,7 @@
 # Documentation #
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b884326515d14bf99cda3cb718c0baef)](https://app.codacy.com/manual/caydee/mpesa-php-full-integration?utm_source=github.com&utm_medium=referral&utm_content=caydee/mpesa-php-full-integration&utm_campaign=Badge_Grade_Dashboard)
+
 This is an integration of the mpesaG2 api using CodeIgniter
 
 ### Configuration ###
